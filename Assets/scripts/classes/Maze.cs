@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Maze
@@ -7,8 +8,14 @@ public class Maze
 
     public int width;
     public int height;
+
+    // True => Wall, False => Path
     public bool[,] grid;
     public Vector2Int start;
+
+    
+    // Initialize direction vectors
+    static private Vector2Int[] directions = {Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
 
     public Maze(int width, int height) {
         this.width = width;
@@ -18,7 +25,7 @@ public class Maze
         {
             for(int j = 0; j < height; j++)
             {
-                this.grid[i, j] = false;
+                this.grid[i, j] = true;
             }
         }
 
@@ -37,22 +44,32 @@ public class Maze
 
         this.start = new Vector2Int(start_x*2 + 1, start_y*2 + 1);
 
-        //   Console.WriteLine("hello");
-        //   Console.WriteLine("The start = {0}", this.start);
         DFS dfs = new DFS(dfs_width, dfs_height);
         List<Cell> cells = dfs.run(start_x, start_y);
 
-        // TODO: Translate cells to grid
+        // Clear paths based on dfs cells
+        foreach( Cell cell in cells ){
+            this.grid[cell.x*2 + 1, cell.y*2 + 1] = false;
+            foreach( Vector2Int direction in directions ){
+                if(!cell.hasWall(direction)){
+                    this.grid[cell.x*2 + 1 + direction.x, cell.y*2 + 1 + direction.y] = false;
+                }
+            }
+        }
+    }
+
+    public void renderTilemap(){
+        // TODO: Render the grid as a tilemap
     }
 
 
     
-   private class Cell {
-        int x,y;
+    private class Cell {
+        public int x,y;
         bool left, right, up, down;
 
         // The previously visited neighbouring cell
-        Cell prev;
+        public Cell prev;
 
         public Cell(int x, int y, Cell prev = null) {
             this.x = x;
@@ -91,7 +108,7 @@ public class Maze
                 this.left = wallValue;
             }
         }
-   }
+    }
 
    
 
@@ -100,8 +117,6 @@ public class Maze
         int height;
         bool[,] visited;
 
-        // Initialize direction vectors
-        static Vector2Int[] directions = {Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
 
         public DFS(int width, int height){
             this.width = width;
@@ -156,7 +171,7 @@ public class Maze
                 // Add cell to list
                 cells.Add(current);
 
-                int[] randIndexes = System.Linq.Enumerable.Range(0, 4).OrderBy(c => rnd.Next()).ToArray();
+                int[] randIndexes = Enumerable.Range(0, 4).OrderBy(c => rnd.Next()).ToArray();
                 // Push all the adjacent cells
                 for(int i = 0; i < 4; i++)
                 {
@@ -165,6 +180,8 @@ public class Maze
                     st.Push(new Cell(adjx, adjy, current));
                 }
             }
+
+            return cells;
         }
 
         public bool isValid(int x, int y)
