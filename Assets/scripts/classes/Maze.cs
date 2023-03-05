@@ -60,7 +60,17 @@ public class Maze
     }
 
     public void renderTilemap(Tilemap tilemap, MazeTileSet tileset){
-        // TODO: Render the grid as a tilemap
+        for(int i = 0; i < this.width; i++)
+        {
+            for(int j = 0; j < this.height; j++)
+            {
+                if(this.grid[i, j]){
+                    tilemap.SetTile(new Vector3Int(x: i, y: j), tileset.wall);
+                } else {
+                    tilemap.SetTile(new Vector3Int(x: i, y: j), tileset.path);
+                }
+            }
+        }
     }
 
 
