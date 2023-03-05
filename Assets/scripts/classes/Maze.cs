@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Maze
 {
@@ -58,7 +59,7 @@ public class Maze
         }
     }
 
-    public void renderTilemap(){
+    public void renderTilemap(Tilemap tilemap, MazeTileSet tileset){
         // TODO: Render the grid as a tilemap
     }
 

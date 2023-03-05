@@ -1,8 +1,7 @@
-using System.Collections;
-using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class MazeTileSet
 {
-    public TileBase path;
-    public TileBase wall;
+    public Tile path;
+    public Tile wall;
 }
